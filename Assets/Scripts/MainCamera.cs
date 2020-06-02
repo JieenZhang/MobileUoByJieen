@@ -83,6 +83,11 @@ namespace Assets.Scripts
                 deltaTime = 0.050f;
             }
 
+            if ((Application.isMobilePlatform) && Client.Game.Scene is GameScene gameScene)
+            {
+                gameScene.JoystickInput = new Microsoft.Xna.Framework.Vector2(movementJoystick.Position.x, -1 * movementJoystick.Position.y);
+            }
+
             Client.Game.Tick(deltaTime);
         }
 
@@ -194,7 +199,7 @@ namespace Assets.Scripts
                 Client.Run();
 
 
-                //Client.Game.sceneChanged += OnSceneChanged;
+                Client.Game.sceneChanged += OnSceneChanged;
                 //Client.Game.Exiting += OnGameExiting;
                 ApplyScalingFactor();
             }
@@ -203,6 +208,12 @@ namespace Assets.Scripts
                 //OnError?.Invoke(e.ToString());
                 Log.Debug(e.ToString());
             }
+        }
+
+        private void OnSceneChanged()
+        {
+            ApplyScalingFactor();
+            movementJoystick.gameObject.SetActive(Application.isMobilePlatform && Client.Game.Scene is GameScene);
         }
 
         private void OnProfileLoaded()
