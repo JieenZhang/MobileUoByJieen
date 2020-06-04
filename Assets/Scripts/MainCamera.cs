@@ -23,6 +23,8 @@ namespace Assets.Scripts
         [SerializeField]
         public bool useGraphicsDrawTexture;
 
+        [SerializeField]
+        private GameObject loginConfigPanel;
 
         [Header("Controls")]
         [SerializeField]
@@ -48,6 +50,7 @@ namespace Assets.Scripts
             }
         }
 
+
         private int lastScreenWidth;
         private int lastScreenHeight;
 
@@ -59,12 +62,20 @@ namespace Assets.Scripts
         // Start is called before the first frame update
         void Start()
         {
-            StartGame();
+            //StartGame();
+            InitConfig();
+            
         }
 
         // Update is called once per frame
         void Update()
         {
+            
+            
+            if (Client.Game == null && !loginConfigPanel.activeSelf)
+            {
+                StartGame();
+            }
             if (Client.Game == null)
                 return;
 
@@ -126,7 +137,7 @@ namespace Assets.Scripts
 
         }
 
-        public void StartGame()
+        public void InitConfig()
         {
             string siteName = "uooutlands";
             CUOEnviroment.ExecutablePath = Path.Combine(Application.persistentDataPath, siteName);
@@ -135,6 +146,7 @@ namespace Assets.Scripts
             {
                 Directory.CreateDirectory(CUOEnviroment.ExecutablePath);
             }
+
 
             Log.Start(LogTypes.All);
             //var settingsFilePath = Settings.GetSettingsFilepath();
@@ -152,8 +164,8 @@ namespace Assets.Scripts
             Settings.GlobalSettings.ClilocFile = "Cliloc.enu";
             Settings.GlobalSettings.FPS = 60;
 
-            Settings.GlobalSettings.IP = "play.uooutlands.com";
-            Settings.GlobalSettings.Port = 2593;
+            //Settings.GlobalSettings.IP = "play.uooutlands.com";
+            //Settings.GlobalSettings.Port = 2593;
 
             //errorText.text = CUOEnviroment.ExecutablePath;
 
@@ -187,6 +199,11 @@ namespace Assets.Scripts
             //This flag is tied to whether the GameCursor gets drawn, in a convoluted way
             //On mobile platform, set this flag to true to prevent the GameCursor from being drawn
             Settings.GlobalSettings.RunMouseInASeparateThread = Application.isMobilePlatform;
+        }
+
+        public void StartGame()
+        {
+            
 
             //Some mobile specific overrides need to be done on the Profile but they can only be done once the Profile has been loaded
             ProfileManager.ProfileLoaded += OnProfileLoaded;
@@ -200,7 +217,7 @@ namespace Assets.Scripts
 
 
                 Client.Game.sceneChanged += OnSceneChanged;
-                //Client.Game.Exiting += OnGameExiting;
+                Client.Game.Exiting += OnGameExiting;
                 ApplyScalingFactor();
             }
             catch (Exception e)
@@ -208,6 +225,11 @@ namespace Assets.Scripts
                 //OnError?.Invoke(e.ToString());
                 Log.Debug(e.ToString());
             }
+        }
+
+        private void OnGameExiting(object sender, EventArgs e)
+        {
+            
         }
 
         private void OnSceneChanged()
