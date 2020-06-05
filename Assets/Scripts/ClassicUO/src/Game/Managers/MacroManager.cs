@@ -33,6 +33,7 @@ using ClassicUO.Game.Scenes;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Interfaces;
 using ClassicUO.Network;
+using ClassicUO.UOScripts;
 using ClassicUO.Utility.Logging;
 
 using Newtonsoft.Json;
@@ -394,7 +395,17 @@ namespace ClassicUO.Game.Managers
                     }
 
                     break;
+                case MacroType.UoScriptMacro:
+                    {
+                        string script = ((MacroObjectString)macro).Text;
 
+                        if (!string.IsNullOrEmpty(script))
+                        {
+                            string[] scriptarr = script.Split('\r');
+                            ScriptManager.PlayScript(scriptarr);
+                        }
+                    }
+                    break;
                 case MacroType.Walk:
                     byte dt = (byte) Direction.Up;
 
@@ -1601,7 +1612,9 @@ namespace ClassicUO.Game.Managers
                     obj = new MacroObjectString(code, MacroSubType.MSC_NONE);
 
                     break;
-
+                case MacroType.UoScriptMacro:
+                    obj = new MacroObjectString(code, MacroSubType.MSC_NONE);
+                    break;
                 default:
                     obj = new MacroObject(code, MacroSubType.MSC_NONE);
 
@@ -1732,6 +1745,7 @@ namespace ClassicUO.Game.Managers
                 case MacroType.SetUpdateRange:
                 case MacroType.ModifyUpdateRange:
                 case MacroType.RazorMacro:
+                case MacroType.UoScriptMacro:
                     SubMenuType = 2;
 
                     break;
@@ -1850,6 +1864,7 @@ namespace ClassicUO.Game.Managers
         ToggleTreeStumps,
         ToggleVegetation,
         ToggleCaveTiles,
+        UoScriptMacro,
     }
 
     internal enum MacroSubType

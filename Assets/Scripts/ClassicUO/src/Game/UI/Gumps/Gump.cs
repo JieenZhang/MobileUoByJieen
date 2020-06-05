@@ -27,10 +27,12 @@ using System.Xml;
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Controls;
+using ClassicUO.Input;
 using ClassicUO.Renderer;
 using ClassicUO.Utility;
 
 using Microsoft.Xna.Framework;
+using UnityEngine;
 
 namespace ClassicUO.Game.UI.Gumps
 {
@@ -65,7 +67,7 @@ namespace ClassicUO.Game.UI.Gumps
     {
         private Button closeButton;
         public static bool CloseButtonsEnabled;
-        
+
         public Gump(uint local, uint server)
         {
             LocalSerial = local;
@@ -94,6 +96,8 @@ namespace ClassicUO.Game.UI.Gumps
                 closeButton.ContainsByBounds = true;
                 closeButton.ButtonAction = ButtonAction.Activate;
             }
+
+
         }
 
         public void ToggleCloseButtonEnabled()

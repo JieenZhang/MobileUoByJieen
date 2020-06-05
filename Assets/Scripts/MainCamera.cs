@@ -1,6 +1,7 @@
 ﻿using ClassicUO;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Scenes;
+using ClassicUO.Game.UI.Gumps;
 using ClassicUO.IO.Resources;
 using ClassicUO.Network;
 using ClassicUO.Utility.Logging;
@@ -199,12 +200,11 @@ namespace Assets.Scripts
             //This flag is tied to whether the GameCursor gets drawn, in a convoluted way
             //On mobile platform, set this flag to true to prevent the GameCursor from being drawn
             Settings.GlobalSettings.RunMouseInASeparateThread = Application.isMobilePlatform;
+
         }
 
         public void StartGame()
         {
-            
-
             //Some mobile specific overrides need to be done on the Profile but they can only be done once the Profile has been loaded
             ProfileManager.ProfileLoaded += OnProfileLoaded;
             Log.Trace("Start AudioSource");
@@ -229,7 +229,7 @@ namespace Assets.Scripts
 
         private void OnGameExiting(object sender, EventArgs e)
         {
-            
+            Application.Quit(0);
         }
 
         private void OnSceneChanged()

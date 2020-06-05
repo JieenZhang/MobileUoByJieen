@@ -28,6 +28,9 @@ namespace ClassicUO.Game.UI.Gumps.Login
     {
         public LoginBackground() : base(0, 0)
         {
+            CanCloseWithRightClick = false;
+            CanCloseWithEsc = false;
+
             if (Client.Version >= ClientVersion.CV_706400)
             {
                 // Background

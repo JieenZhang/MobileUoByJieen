@@ -23,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClassicUO.Game.Managers;
+using ClassicUO.Game.Scenes;
+using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Input;
 using ClassicUO.Interfaces;
 using ClassicUO.Renderer;
@@ -32,7 +34,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 using SDL2;
-
+using UnityEngine;
 using IUpdateable = ClassicUO.Interfaces.IUpdateable;
 using Keyboard = ClassicUO.Input.Keyboard;
 using Mouse = ClassicUO.Input.Mouse;
@@ -58,7 +60,7 @@ namespace ClassicUO.Game.UI.Controls
         private bool _handlesKeyboardFocus;
         private Control _parent;
 
-        protected static Vector3 _hueVector = Vector3.Zero;
+        protected static Microsoft.Xna.Framework.Vector3 _hueVector = Microsoft.Xna.Framework.Vector3.Zero;
 
         protected const int MOBILE_CLOSE_BUTTON_ID = -9999;
 
@@ -336,7 +338,7 @@ namespace ClassicUO.Game.UI.Controls
             if (IsVisible && CUOEnviroment.Debug)
             {
                 ResetHueVector();
-                batcher.DrawRectangle(Texture2DCache.GetTexture(Color.Green), x, y, Width, Height, ref _hueVector);
+                batcher.DrawRectangle(Texture2DCache.GetTexture(Microsoft.Xna.Framework.Color.Green), x, y, Width, Height, ref _hueVector);
             }
         }
 
@@ -381,6 +383,7 @@ namespace ClassicUO.Game.UI.Controls
 
         internal event EventHandler FocusEnter, FocusLost;
 
+        private float lastMouseDownTime;
 
         public void HitTest(int x, int y, ref Control res)
         {
@@ -595,6 +598,7 @@ namespace ClassicUO.Game.UI.Controls
 
         protected virtual void OnMouseDown(int x, int y, MouseButtonType button)
         {
+            lastMouseDownTime = Time.Ticks;
             _mouseIsDown = true;
             Parent?.OnMouseDown(X + x, Y + y, button);
         }
@@ -614,6 +618,25 @@ namespace ClassicUO.Game.UI.Controls
             if (button == MouseButtonType.Right && !IsDisposed && !CanCloseWithRightClick && !Keyboard.Alt && !Keyboard.Shift && !Keyboard.Ctrl)
             {
                 ContextMenu?.Show();
+            }
+            uint time = Time.Ticks;
+            // unity mobile platform use it
+            if (Application.isMobilePlatform && lastMouseDownTime + 3000 < time 
+                && Client.Game.Scene is GameScene
+                )
+            {
+                if(Parent != null && Parent is Gump gump)
+                {
+                    if(gump.CanCloseWithRightClick)
+                        Parent?.Dispose();
+                }
+                    
+                if (Parent == null && this is Gump)
+                {
+                    if (this.CanCloseWithRightClick)
+                        this.Dispose();
+                }
+                    
             }
         }
 
@@ -656,11 +679,13 @@ namespace ClassicUO.Game.UI.Controls
 
         protected virtual void OnDragBegin(int x, int y)
         {
+            lastMouseDownTime = Time.Ticks;
         }
 
         protected virtual void OnDragEnd(int x, int y)
         {
             _mouseIsDown = false;
+            lastMouseDownTime = Time.Ticks;
         }
 
         protected virtual void OnTextInput(string c)
@@ -684,6 +709,7 @@ namespace ClassicUO.Game.UI.Controls
 
         protected virtual void OnMove(int x, int y)
         {
+            lastMouseDownTime = Time.Ticks;
         }
         
         internal virtual void OnFocusEnter()

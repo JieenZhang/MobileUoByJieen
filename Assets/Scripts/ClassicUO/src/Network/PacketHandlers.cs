@@ -37,6 +37,7 @@ using ClassicUO.Game.UI.Gumps;
 using ClassicUO.IO;
 using ClassicUO.IO.Resources;
 using ClassicUO.Renderer;
+using ClassicUO.UOScripts;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Collections;
 using ClassicUO.Utility.Logging;
@@ -1698,6 +1699,8 @@ namespace ClassicUO.Network
                     NetClient.Socket.Send(new PClientViewRange(World.ClientViewRange));
 
                 ProfileManager.Current.ReadGumps()?.ForEach(UIManager.Add);
+
+                ScriptManager.OnLogin();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using ClassicUO.Utility;
 using Microsoft.Xna.Framework.Graphics;
 using SDL2;
 
@@ -136,6 +137,9 @@ namespace Microsoft.Xna.Framework
             totalTicks += ticks;
             GameTime gameTime = new GameTime(new TimeSpan(0), new TimeSpan(0), new TimeSpan(totalTicks), new TimeSpan(ticks));
             Update(gameTime);
+
+            // add timer update
+            Timer.Slice();
         }
 
         public void DrawUnity(float delta)
